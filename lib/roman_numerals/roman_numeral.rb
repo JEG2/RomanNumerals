@@ -37,14 +37,17 @@ module RomanNumerals
       }
     end
 
-    def initialize
+    def initialize(numeral)
+      @numeral = numeral
     end
 
-    def to_arabic roman_number
-      fail ConversionError, "Cannot convert #{roman_number}" \
-        unless is_roman? roman_number
+    attr_reader :numeral
+    private     :numeral
 
-      roman_split(roman_number).inject(0) {|result,element|  result + element }
+    def to_arabic
+      fail ConversionError, "Cannot convert #{roman_number}" unless is_roman?
+
+      roman_split.inject(0) {|result,element|  result + element }
     end
 
     def convert value
@@ -57,37 +60,37 @@ module RomanNumerals
 
     private
 
-    def roman_split roman_number
+    def roman_split
       returnme = []
-      roman_each(roman_number) {|numeral| returnme  << numeral   }
+      roman_each {|numeral| returnme  << numeral   }
       returnme
     end
 
-    def roman_each roman_numeral, &block
-      roman_numeral.scan(/\G#{ROMAN_CHUNK_REGEX}/) do |chunk|
+    def roman_each
+      numeral.scan(/\G#{ROMAN_CHUNK_REGEX}/) do |chunk|
         yield ROMAN_TO_ARABIC_MAP[chunk]
       end
     end
 
-    def only_roman_digits? roman_number
-      remainder= roman_number.dup
+    def only_roman_digits?
+      remainder= numeral.dup
       ARABIC_TO_ROMAN_MAP.each_value {|value| remainder.delete!(value) }
       !(remainder.size > 0 )
     end
 
-    def roman_digits_in_order? roman_number
-      roman_split(roman_number).each_cons(2).all? { |a| a[0] >= a[1] }
+    def roman_digits_in_order?
+      roman_split.each_cons(2).all? { |a| a[0] >= a[1] }
     end
 
-    def all_roman_characters_less_than_three? character
+    def all_roman_characters_less_than_three?
       (ARABIC_TO_ROMAN_MAP.values.select {|n| n.size==1}).each.all?  { |ch|
-                                   ! character.include?(ch * 4) }
+                                   ! numeral.include?(ch * 4) }
     end
 
-    def is_roman? numeral
-      numeral.is_a?(String) && only_roman_digits?(numeral) &&
-                               roman_digits_in_order?(numeral) &&
-                               all_roman_characters_less_than_three?(numeral)
+    def is_roman?
+      numeral.is_a?(String) && only_roman_digits? &&
+                               roman_digits_in_order? &&
+                               all_roman_characters_less_than_three?
     end
   end
 end
