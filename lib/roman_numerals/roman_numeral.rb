@@ -12,6 +12,22 @@ module RomanNumerals
       @roman_arabic_map = @arabic_roman_map.invert
     end
 
+    def to_roman arabic_number
+      return false unless is_arabic? arabic_number
+      to_roman_private arabic_number.to_i
+    end
+
+    def to_arabic roman_number
+      return false unless is_roman? roman_number
+      roman_split(roman_number).inject(0) {|result,element|  result + element }
+    end
+
+    def convert value
+      to_roman(value) || to_arabic(value) || "invalid entry"
+    end
+
+    private
+
     def is_arabic? number
       return (1..3999).include?(number.to_i)
     end
@@ -62,22 +78,6 @@ module RomanNumerals
                                 roman_digits_in_order?(numeral) &&
                                 all_roman_characters_less_than_three?(numeral)
     end
-
-    def to_roman arabic_number
-      return false unless is_arabic? arabic_number
-      to_roman_private arabic_number.to_i
-    end
-
-    def to_arabic roman_number
-      return false unless is_roman? roman_number
-      roman_split(roman_number).inject(0) {|result,element|  result + element }
-    end
-
-    def convert value
-      to_roman(value) || to_arabic(value) || "invalid entry"
-    end
-
-    private
 
     #made this a private class, so that I can remove testing for a valid entry from it, and shrink
     #the method down a bit. Now that it's private, I can increase the likelihood that the
