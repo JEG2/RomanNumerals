@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby -w
+
+require_relative '../lib/roman_numerals'
+
+rn = RomanNumerals::RomanNumeral.new
+File.foreach(File.join(__dir__, *%w[.. data known_numerals.txt])) do |test|
+  arabic, roman = test.strip.split(/\s*=\s*/)
+  arabic        = arabic.to_i
+
+  abort "Failed to romanize:  #{arabic}"  unless rn.to_roman(arabic) == roman
+  abort "Failed to deromanize:  #{roman}" unless rn.to_arabic(roman) == arabic
+end
+puts "All numbers were correct."

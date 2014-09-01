@@ -1,7 +1,6 @@
 #!/usr/bin/env ruby
 
-require_relative '../roman_numerals'
+require_relative '../lib/roman_numerals'
 
-
-rn =  RomanNumerals.new 
+rn = RomanNumerals::RomanNumeral.new
 puts rn.convert(ARGV[0])
