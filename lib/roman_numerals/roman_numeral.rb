@@ -50,6 +50,12 @@ module RomanNumerals
       roman_split.inject(0) {|result,element|  result + element }
     end
 
+    def is_roman?
+      numeral.is_a?(String) && only_roman_digits? &&
+                               roman_digits_in_order? &&
+                               all_roman_characters_less_than_three?
+    end
+
     def convert value
       if is_roman?(value)
         to_arabic(value)
@@ -85,12 +91,6 @@ module RomanNumerals
     def all_roman_characters_less_than_three?
       (ARABIC_TO_ROMAN_MAP.values.select {|n| n.size==1}).each.all?  { |ch|
                                    ! numeral.include?(ch * 4) }
-    end
-
-    def is_roman?
-      numeral.is_a?(String) && only_roman_digits? &&
-                               roman_digits_in_order? &&
-                               all_roman_characters_less_than_three?
     end
   end
 end
