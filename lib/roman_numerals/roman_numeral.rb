@@ -76,9 +76,7 @@ module RomanNumerals
     end
 
     def only_roman_digits?
-      remainder= numeral.dup
-      ARABIC_TO_ROMAN_MAP.each_value {|value| remainder.delete!(value) }
-      !(remainder.size > 0 )
+      numeral =~ /\A#{ROMAN_CHUNK_REGEX}+\z/
     end
 
     def roman_digits_in_order?
