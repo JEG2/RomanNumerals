@@ -27,7 +27,7 @@ module RomanNumerals
       ")"                                            # end group
     )
 
-    def self.to_roman arabic_number
+    def self.from_i arabic_number
       fail ConversionError, "Cannot convert #{arabic_number}" \
         unless (1..3999).include?(arabic_number)
 
@@ -39,10 +39,10 @@ module RomanNumerals
 
     def self.convert value
       roman_numeral = new(value)
-      if roman_numeral.is_roman?
-        roman_numeral.to_arabic
+      if roman_numeral.valid?
+        roman_numeral.to_i
       else
-        to_roman(value.to_i)
+        from_i(value.to_i)
       end
     end
 
@@ -53,16 +53,16 @@ module RomanNumerals
     attr_reader :numeral
     private     :numeral
 
-    def to_arabic
-      fail ConversionError, "Cannot convert #{roman_number}" unless is_roman?
-
-      roman_split.inject(0) {|result,element|  result + element }
-    end
-
-    def is_roman?
+    def valid?
       numeral.is_a?(String) && only_roman_digits? &&
                                roman_digits_in_order? &&
                                all_roman_characters_less_than_three?
+    end
+
+    def to_i
+      fail ConversionError, "Cannot convert #{roman_number}" unless valid?
+
+      roman_split.inject(0) {|result,element|  result + element }
     end
 
     private
