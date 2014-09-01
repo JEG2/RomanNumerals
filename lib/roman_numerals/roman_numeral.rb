@@ -16,6 +16,14 @@ module RomanNumerals
       1000 => "M"
     }
     ROMAN_TO_ARABIC_MAP = ARABIC_TO_ROMAN_MAP.invert
+    ROMAN_CHUNK_REGEX   = Regexp.new(
+      "(?:" +                                        # a non-capturing group
+      ROMAN_TO_ARABIC_MAP                            # made of the keys above
+        .keys
+        .sort_by { |chunk| -chunk.chars.uniq.size }  # sort two char types first
+        .join("|") +                                 # join with regex OR
+      ")"                                            # end group
+    )
 
     def initialize
     end
@@ -46,24 +54,10 @@ module RomanNumerals
       returnme
     end
 
-    def roman_each roman_numeral
-      working_number = roman_numeral.dup
-      while working_number.size > 0 do
-        yield roman_find_two_digit(working_number) || roman_find_one_digit(working_number)
+    def roman_each roman_numeral, &block
+      roman_numeral.scan(/\G#{ROMAN_CHUNK_REGEX}/) do |chunk|
+        yield ROMAN_TO_ARABIC_MAP[chunk]
       end
-    end
-
-    def roman_find_two_digit roman_numeral
-          return ROMAN_TO_ARABIC_MAP[roman_numeral.slice!(-2,2)] if
-                                            roman_numeral.size >= 2 &&
-                                           ROMAN_TO_ARABIC_MAP[roman_numeral[-2,2]]
-          return false
-    end
-
-    def roman_find_one_digit roman_numeral
-        return  ROMAN_TO_ARABIC_MAP[roman_numeral.slice!(-1)] if
-                                ROMAN_TO_ARABIC_MAP[roman_numeral[-1]]
-        return false
     end
 
     def only_roman_digits? roman_number
@@ -73,7 +67,7 @@ module RomanNumerals
     end
 
     def roman_digits_in_order? roman_number
-      roman_split(roman_number).each_cons(2).all? { |a| a[0] <= a[1] }
+      roman_split(roman_number).each_cons(2).all? { |a| a[0] >= a[1] }
     end
 
     def all_roman_characters_less_than_three? character
