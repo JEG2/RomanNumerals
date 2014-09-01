@@ -2,5 +2,4 @@
 
 require_relative '../lib/roman_numerals'
 
-rn = RomanNumerals::RomanNumeral.new
-puts rn.convert(ARGV[0])
+puts RomanNumerals::RomanNumeral.convert(ARGV.first)

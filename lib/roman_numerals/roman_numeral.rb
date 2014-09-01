@@ -37,6 +37,15 @@ module RomanNumerals
       }
     end
 
+    def self.convert value
+      roman_numeral = new(value)
+      if roman_numeral.is_roman?
+        roman_numeral.to_arabic
+      else
+        to_roman(value.to_i)
+      end
+    end
+
     def initialize(numeral)
       @numeral = numeral
     end
@@ -54,14 +63,6 @@ module RomanNumerals
       numeral.is_a?(String) && only_roman_digits? &&
                                roman_digits_in_order? &&
                                all_roman_characters_less_than_three?
-    end
-
-    def convert value
-      if is_roman?(value)
-        to_arabic(value)
-      else
-        self.class.to_roman(value.to_i)
-      end
     end
 
     private
