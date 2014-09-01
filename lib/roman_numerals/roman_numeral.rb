@@ -25,15 +25,15 @@ module RomanNumerals
       ")"                                            # end group
     )
 
-    def initialize
-    end
-
-    def to_roman arabic_number
+    def self.to_roman arabic_number
       return false unless (1..3999).include?(arabic_number)
       ARABIC_TO_ROMAN_MAP.keys.sort.reverse.inject("") {|roman_return_string,key|
         multiplier,arabic_number = arabic_number.divmod(key)
         roman_return_string += ARABIC_TO_ROMAN_MAP[key] * multiplier
       }
+    end
+
+    def initialize
     end
 
     def to_arabic roman_number
@@ -42,7 +42,7 @@ module RomanNumerals
     end
 
     def convert value
-      to_roman(value) || to_arabic(value) || "invalid entry"
+      self.class.to_roman(value) || to_arabic(value) || "invalid entry"
     end
 
     private

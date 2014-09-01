@@ -7,7 +7,9 @@ File.foreach(File.join(__dir__, *%w[.. data known_numerals.txt])) do |test|
   arabic, roman = test.strip.split(/\s*=\s*/)
   arabic        = arabic.to_i
 
-  abort "Failed to romanize:  #{arabic}"  unless rn.to_roman(arabic) == roman
-  abort "Failed to deromanize:  #{roman}" unless rn.to_arabic(roman) == arabic
+  abort "Failed to romanize:  #{arabic}"  \
+    unless RomanNumerals::RomanNumeral.to_roman(arabic) == roman
+  abort "Failed to deromanize:  #{roman}" \
+    unless rn.to_arabic(roman) == arabic
 end
 puts "All numbers were correct."
