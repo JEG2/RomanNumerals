@@ -1,15 +1,23 @@
 module RomanNumerals
   class RomanNumeral
+    ARABIC_TO_ROMAN_MAP = {
+      1    => "I",
+      4    => "IV",
+      5    => "V",
+      9    => "IX",
+      10   => "X",
+      40   => "XL",
+      50   => "L",
+      90   => "XC",
+      100  => "C",
+      400  => "CD",
+      500  => "D",
+      900  => "CM",
+      1000 => "M"
+    }
+    ROMAN_TO_ARABIC_MAP = ARABIC_TO_ROMAN_MAP.invert
+
     def initialize
-      @arabic_roman_map = { 1 => "I",   4 => "IV",
-                            5 => "V",   9 => "IX",
-                            10 => "X",  40 => "XL",
-                            50 => "L",  90 => "XC",
-                            100 => "C", 400 => "CD",
-                            500 => "D", 900 => "CM",
-                            1000 => "M"
-      }
-      @roman_arabic_map = @arabic_roman_map.invert
     end
 
     def to_roman arabic_number
@@ -46,21 +54,21 @@ module RomanNumerals
     end
 
     def roman_find_two_digit roman_numeral
-          return @roman_arabic_map[roman_numeral.slice!(-2,2)] if
+          return ROMAN_TO_ARABIC_MAP[roman_numeral.slice!(-2,2)] if
                                             roman_numeral.size >= 2 &&
-                                           @roman_arabic_map[roman_numeral[-2,2]]
+                                           ROMAN_TO_ARABIC_MAP[roman_numeral[-2,2]]
           return false
     end
 
     def roman_find_one_digit roman_numeral
-        return  @roman_arabic_map[roman_numeral.slice!(-1)] if
-                                @roman_arabic_map[roman_numeral[-1]]
+        return  ROMAN_TO_ARABIC_MAP[roman_numeral.slice!(-1)] if
+                                ROMAN_TO_ARABIC_MAP[roman_numeral[-1]]
         return false
     end
 
     def only_roman_digits? roman_number
       remainder= roman_number.dup
-      @arabic_roman_map.each_value {|value| remainder.delete!(value) }
+      ARABIC_TO_ROMAN_MAP.each_value {|value| remainder.delete!(value) }
       !(remainder.size > 0 )
     end
 
@@ -69,7 +77,7 @@ module RomanNumerals
     end
 
     def all_roman_characters_less_than_three? character
-      (@arabic_roman_map.values.select {|n| n.size==1}).each.all?  { |ch|
+      (ARABIC_TO_ROMAN_MAP.values.select {|n| n.size==1}).each.all?  { |ch|
                                    ! character.include?(ch * 4) }
     end
 
@@ -83,9 +91,9 @@ module RomanNumerals
     #the method down a bit. Now that it's private, I can increase the likelihood that the
     #incoming value will be an arabic number that won't generate any bugs
     def to_roman_private arabic_number
-      @arabic_roman_map.keys.sort.reverse.inject("") {|roman_return_string,key|
+      ARABIC_TO_ROMAN_MAP.keys.sort.reverse.inject("") {|roman_return_string,key|
         multiplier,arabic_number = arabic_number.divmod(key)
-        roman_return_string += @arabic_roman_map[key] * multiplier
+        roman_return_string += ARABIC_TO_ROMAN_MAP[key] * multiplier
       }
     end
   end
