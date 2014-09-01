@@ -1,5 +1,7 @@
 module RomanNumerals
   class RomanNumeral
+    ConversionError = Class.new(RuntimeError)
+
     ARABIC_TO_ROMAN_MAP = {
       1    => "I",
       4    => "IV",
@@ -26,7 +28,9 @@ module RomanNumerals
     )
 
     def self.to_roman arabic_number
-      return false unless (1..3999).include?(arabic_number)
+      fail ConversionError, "Cannot convert #{arabic_number}" \
+        unless (1..3999).include?(arabic_number)
+
       ARABIC_TO_ROMAN_MAP.keys.sort.reverse.inject("") {|roman_return_string,key|
         multiplier,arabic_number = arabic_number.divmod(key)
         roman_return_string += ARABIC_TO_ROMAN_MAP[key] * multiplier
@@ -37,12 +41,18 @@ module RomanNumerals
     end
 
     def to_arabic roman_number
-      return false unless is_roman? roman_number
+      fail ConversionError, "Cannot convert #{roman_number}" \
+        unless is_roman? roman_number
+
       roman_split(roman_number).inject(0) {|result,element|  result + element }
     end
 
     def convert value
-      self.class.to_roman(value) || to_arabic(value) || "invalid entry"
+      if is_roman?(value)
+        to_arabic(value)
+      else
+        self.class.to_roman(value.to_i)
+      end
     end
 
     private
@@ -75,9 +85,9 @@ module RomanNumerals
     end
 
     def is_roman? numeral
-      !numeral.is_a?(Fixnum) && only_roman_digits?(numeral) &&
-                                roman_digits_in_order?(numeral) &&
-                                all_roman_characters_less_than_three?(numeral)
+      numeral.is_a?(String) && only_roman_digits?(numeral) &&
+                               roman_digits_in_order?(numeral) &&
+                               all_roman_characters_less_than_three?(numeral)
     end
   end
 end
