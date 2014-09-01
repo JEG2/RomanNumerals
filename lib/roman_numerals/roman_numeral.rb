@@ -29,8 +29,11 @@ module RomanNumerals
     end
 
     def to_roman arabic_number
-      return false unless is_arabic? arabic_number
-      to_roman_private arabic_number.to_i
+      return false unless (1..3999).include?(arabic_number)
+      ARABIC_TO_ROMAN_MAP.keys.sort.reverse.inject("") {|roman_return_string,key|
+        multiplier,arabic_number = arabic_number.divmod(key)
+        roman_return_string += ARABIC_TO_ROMAN_MAP[key] * multiplier
+      }
     end
 
     def to_arabic roman_number
@@ -43,10 +46,6 @@ module RomanNumerals
     end
 
     private
-
-    def is_arabic? number
-      return (1..3999).include?(number.to_i)
-    end
 
     def roman_split roman_number
       returnme = []
@@ -79,16 +78,6 @@ module RomanNumerals
       !numeral.is_a?(Fixnum) && only_roman_digits?(numeral) &&
                                 roman_digits_in_order?(numeral) &&
                                 all_roman_characters_less_than_three?(numeral)
-    end
-
-    #made this a private class, so that I can remove testing for a valid entry from it, and shrink
-    #the method down a bit. Now that it's private, I can increase the likelihood that the
-    #incoming value will be an arabic number that won't generate any bugs
-    def to_roman_private arabic_number
-      ARABIC_TO_ROMAN_MAP.keys.sort.reverse.inject("") {|roman_return_string,key|
-        multiplier,arabic_number = arabic_number.divmod(key)
-        roman_return_string += ARABIC_TO_ROMAN_MAP[key] * multiplier
-      }
     end
   end
 end
