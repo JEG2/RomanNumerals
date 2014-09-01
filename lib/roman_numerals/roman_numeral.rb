@@ -62,7 +62,7 @@ module RomanNumerals
     def to_i
       fail ConversionError, "Cannot convert #{roman_number}" unless valid?
 
-      chunks.inject(0) {|result,element|  result + element }
+      chunks.inject(0, :+)
     end
 
     private
