@@ -62,20 +62,16 @@ module RomanNumerals
     def to_i
       fail ConversionError, "Cannot convert #{roman_number}" unless valid?
 
-      roman_split.inject(0) {|result,element|  result + element }
+      chunks.inject(0) {|result,element|  result + element }
     end
 
     private
 
-    def roman_split
-      returnme = []
-      roman_each {|numeral| returnme  << numeral   }
-      returnme
-    end
-
-    def roman_each
-      numeral.scan(/\G#{ROMAN_CHUNK_REGEX}/) do |chunk|
-        yield ROMAN_TO_ARABIC_MAP[chunk]
+    def chunks
+      Enumerator.new do |yielder|
+        numeral.scan(/\G#{ROMAN_CHUNK_REGEX}/) do |chunk|
+          yielder.yield ROMAN_TO_ARABIC_MAP[chunk]
+        end
       end
     end
 
@@ -86,7 +82,7 @@ module RomanNumerals
     end
 
     def roman_digits_in_order?
-      roman_split.each_cons(2).all? { |a| a[0] >= a[1] }
+      chunks.each_cons(2).all? { |a| a[0] >= a[1] }
     end
 
     def all_roman_characters_less_than_three?
