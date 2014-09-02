@@ -84,8 +84,10 @@ module RomanNumerals
     end
 
     def all_roman_characters_less_than_three?
-      (ARABIC_TO_ROMAN_MAP.values.select {|n| n.size==1}).each.all?  { |ch|
-                                   ! numeral.include?(ch * 4) }
+      ARABIC_TO_ROMAN_MAP
+        .values
+        .select { |n| n.size == 1 }
+        .none?  { |ch| numeral.include?(ch * 4) }
     end
   end
 end
